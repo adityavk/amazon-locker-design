@@ -25,10 +25,10 @@ public:
     OperationStatus<LockerStationDetails> getLockerStationForPackage(PackageId packageId);
 
     /** Open the locker to retrieve a package */
-    OperationStatus<bool> openLocker(const LockerStationDetails& lockerStation, LockerPickupCode code);
+    OperationStatus<bool> openLocker(LockerStationId lockerStationId, LockerPickupCode code);
 
     /** Deliver a package to the locker station */
-    OperationStatus<bool> deliverPackage(const LockerStationDetails& lockerStation, PackageId packageId);
+    OperationStatus<bool> deliverPackage(LockerStationId lockerStationId, PackageId packageId);
 
 private:
     friend class LockerSystemAdmin;

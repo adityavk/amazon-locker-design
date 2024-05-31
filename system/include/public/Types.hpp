@@ -4,11 +4,20 @@
 #include <cstdint>
 #include <string>
 #include <chrono>
+#include <ostream>
 
 /** Represents a location on the Earth's surface */
 struct Location {
     double latitude;
     double longitude;
+    std::string address;
+
+    Location(double latitude, double longitude, std::string address) : latitude(latitude), longitude(longitude), address(address) {}
+
+    friend std::ostream& operator<<(std::ostream& os, const Location& location) {
+        os << location.address;
+        return os;
+    }
 };
 
 /** Date-time representation */
