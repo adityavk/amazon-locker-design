@@ -1,7 +1,6 @@
 #include "../include/private/LockerSystemAdmin.hpp"
 #include "../include/public/LockerSystem.hpp"
 #include "../include/private/LockerStation.hpp"
-#include "../include/private/PackageLocationManager.hpp"
 #include "../include/private/LockerStationRepository.hpp"
 
 
@@ -33,7 +32,6 @@ void LockerSystemAdmin::initializeSystem() {
     }
     auto lockerFinder = LockerFinderFactory::createLockerFinder(lockerFinderStrategy);
     auto notificationManager = NotificationManagerFactory::createNotificationManager(notificationManagerType);
-    auto packageLocationManager = std::make_unique<PackageLocationManager>(lockerFinder);
     auto lockerStationRepository = std::make_unique<LockerStationRepository>(lockerStations);
 
     for (auto& [id, station] : lockerStations) {
@@ -45,6 +43,6 @@ void LockerSystemAdmin::initializeSystem() {
         lockerStationRepository->addLockerStation(std::move(lockerStation));
     }
 
-    LockerSystem::initialize(std::move(lockerFinder), std::move(packageLocationManager), std::move(lockerStationRepository), notificationManager);
+    LockerSystem::initialize(std::move(lockerFinder), std::move(lockerStationRepository), notificationManager);
     initialized = true;
 }

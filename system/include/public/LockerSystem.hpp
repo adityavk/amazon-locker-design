@@ -7,7 +7,6 @@
 
 class ILockerFinder;
 class ILockerStationRepository;
-class IPackageLocationManager;
 class INotificationManager;
 
 /** Singleton class for customers and delivery agents to interact with the locker system */
@@ -20,10 +19,7 @@ public:
     std::vector<LockerStationDetails> findLockersNearLocation(Location location, double radius) const;
 
     /** Choose a locker station to store a package for the given duration */
-    OperationStatus<bool> storePackage(const Package& package, LockerStationId lockerStationId, DateTime fromTime, DateTime toTime) const;
-
-    /** Get the locker station where a package is stored */
-    OperationStatus<LockerStationDetails> getLockerStationForPackage(PackageId packageId) const;
+    OperationStatus<bool> storePackage(Package& package, LockerStationId lockerStationId, DateTime fromTime, DateTime toTime) const;
 
     /** Open the locker to retrieve a package */
     OperationStatus<bool> openLocker(LockerStationId lockerStationId, LockerPickupCode code) const;
@@ -40,13 +36,11 @@ private:
     static std::unique_ptr<LockerSystem> instance;
 
     std::unique_ptr<ILockerFinder> lockerFinder;
-    std::unique_ptr<IPackageLocationManager> packageManager;
     std::unique_ptr<ILockerStationRepository> lockerStationRepository;
     std::shared_ptr<INotificationManager> notificationManager;
 
     LockerSystem(
         std::unique_ptr<ILockerFinder> lockerFinder,
-        std::unique_ptr<IPackageLocationManager> packageManager,
         std::unique_ptr<ILockerStationRepository> lockerStationRepository,
         std::shared_ptr<INotificationManager> notificationManager
     );
@@ -55,7 +49,6 @@ private:
 
     static void initialize(
         std::unique_ptr<ILockerFinder> lockerFinder,
-        std::unique_ptr<IPackageLocationManager> packageManager,
         std::unique_ptr<ILockerStationRepository> lockerStationRepository,
         std::shared_ptr<INotificationManager> notificationManager
     );

@@ -1,23 +1,20 @@
 #include "../include/public/LockerSystem.hpp"
 #include "../include/private/interfaces/ILockerFinder.hpp"
 #include "../include/private/interfaces/ILockerStationRepository.hpp"
-#include "../include/private/interfaces/IPackageLocationManager.hpp"
 
 LockerSystem::LockerSystem(
     std::unique_ptr<ILockerFinder> lockerFinder,
-    std::unique_ptr<IPackageLocationManager> packageManager,
     std::unique_ptr<ILockerStationRepository> lockerStationRepository,
     std::shared_ptr<INotificationManager> notificationManager
-) : lockerFinder(std::move(lockerFinder)), packageManager(std::move(packageManager)),
+) : lockerFinder(std::move(lockerFinder)),
     lockerStationRepository(std::move(lockerStationRepository)), notificationManager(notificationManager) {}
 
 void LockerSystem::initialize(
     std::unique_ptr<ILockerFinder> lockerFinder,
-    std::unique_ptr<IPackageLocationManager> packageManager,
     std::unique_ptr<ILockerStationRepository> lockerStationRepository,
     std::shared_ptr<INotificationManager> notificationManager
 ) {
-    instance = std::make_unique<LockerSystem>(std::move(lockerFinder), std::move(packageManager), std::move(lockerStationRepository), notificationManager);
+    instance = std::make_unique<LockerSystem>(std::move(lockerFinder), std::move(lockerStationRepository), notificationManager);
 }
 
 LockerSystem& LockerSystem::getInstance() {
@@ -29,7 +26,7 @@ std::vector<LockerStationDetails> LockerSystem::findLockersNearLocation(Location
     return lockerFinder->findLockersNearLocation(location, radius, lockerStationRepository.get());
 }
 
-OperationStatus<bool> LockerSystem::storePackage(const Package& package, LockerStationId lockerStationId, DateTime fromTime, DateTime toTime) const {
+OperationStatus<bool> LockerSystem::storePackage(Package& package, LockerStationId lockerStationId, DateTime fromTime, DateTime toTime) const {
     auto lockerStationStatus = lockerStationRepository->getLockerStationById(lockerStationId);
     if (!lockerStationStatus.success) {
         return OperationStatus<bool>(std::move(lockerStationStatus.message));
@@ -41,12 +38,8 @@ OperationStatus<bool> LockerSystem::storePackage(const Package& package, LockerS
         return OperationStatus<bool>(std::move(result.message));
     }
 
-    packageManager->setLockerStationForPackage(package.id, lockerStationId);
+    package.lockerStationId = lockerStationId;
     return OperationStatus<bool>(true);
-}
-
-OperationStatus<LockerStationDetails> LockerSystem::getLockerStationForPackage(PackageId packageId) const {
-    return packageManager->getLockerStationForPackage(packageId);
 }
 
 OperationStatus<bool> LockerSystem::openLocker(LockerStationId lockerStationId, LockerPickupCode code) const {

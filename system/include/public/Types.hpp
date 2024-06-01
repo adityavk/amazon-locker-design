@@ -19,6 +19,25 @@ struct Location {
         os << location.address;
         return os;
     }
+
+    double distanceTo(const Location& other) const {
+        double lat1 = latitude;
+        double lon1 = longitude;
+        double lat2 = other.latitude;
+        double lon2 = other.longitude;
+
+        // Haversine formula
+        double dLat = (lat2 - lat1) * M_PI / 180.0;
+        double dLon = (lon2 - lon1) * M_PI / 180.0;
+
+        lat1 = lat1 * M_PI / 180.0;
+        lat2 = lat2 * M_PI / 180.0;
+
+        double a = std::pow(std::sin(dLat / 2), 2) + std::pow(std::sin(dLon / 2), 2) * std::cos(lat1) * std::cos(lat2);
+        double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1 - a));
+
+        return 6371000 * c;
+    }
 };
 
 /** Date-time representation */
@@ -53,6 +72,9 @@ using UserId = uint64_t;
 /** Order's internal ID */
 using OrderId = uint64_t;
 
+/** Locker station ID */
+using LockerStationId = uint64_t;
+
 /** Represents a package */
 struct Package {
     PackageId id;
@@ -60,10 +82,8 @@ struct Package {
     OrderId orderId;
     PackageStatus status;
     PackageSize size;
+    LockerStationId lockerStationId;
 };
-
-/** Locker station ID */
-using LockerStationId = uint64_t;
 
 /** Represents a Locker station */
 struct LockerStationDetails {
@@ -85,6 +105,6 @@ struct OperationStatus {
     OperationStatus(std::string message) : success(false), message(message) {}
 };
 
-using NotificationHandler = std::function<void(UserId, std::string)>;
+using NotificationHandler = std::function<void(std::string)>;
 
 #endif // TYPES_HPP
