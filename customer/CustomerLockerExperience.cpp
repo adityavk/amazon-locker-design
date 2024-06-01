@@ -28,7 +28,12 @@ OperationStatus<bool> CustomerLockerExperience::checkoutFromShoppingCart(double 
             continue;
         }
 
-        const auto storeStatus = lockerSystem.storePackage(package, lockerStations[stationIndex - 1].id, estimatedDeliveryTime, estimatedDeliveryTime + storageDuration);
+        const auto storeStatus = lockerSystem.storePackage(
+            package,
+            lockerStations[stationIndex - 1].id,
+            estimatedDeliveryTime - reservationDurationPriorToETA,
+            estimatedDeliveryTime + storageDuration
+        );
         if (!storeStatus.success) {
             std::cout << "Failed to store package: " << storeStatus.message << std::endl;
             std::cout << "Try again? (y/n): ";

@@ -13,6 +13,7 @@ class CustomerLockerExperience {
     Location location;
     std::unordered_map<PackageId, LockerStationId> packageToLockerStation;
     const std::chrono::days storageDuration = std::chrono::days(3);
+    const std::chrono::days reservationDurationPriorToETA = std::chrono::days(1);
 public:
     CustomerLockerExperience(UserId userId, std::string name, std::string email, Location location);
 

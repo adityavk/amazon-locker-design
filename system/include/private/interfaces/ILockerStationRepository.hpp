@@ -3,24 +3,26 @@
 
 #include <cstdint>
 #include <vector>
-#include "../public/Types.hpp"
+#include <memory>
+#include "../../public/Types.hpp"
+#include "../LockerStation.hpp"
 
-/** Interface for the repository of locker stations */
+/** Interface for a repository of locker stations */
 class ILockerStationRepository {
 public:
     virtual ~ILockerStationRepository() = default;
 
-    /** Get the details of a locker station by ID */
-    virtual LockerStationDetails getLockerStationById(LockerStationId id) = 0;
-
-    /** Get the details of all locker stations */
+    /** Get all locker station details */
     virtual std::vector<LockerStationDetails> getAllLockerStations() = 0;
 
-    /** Add a new locker station */
-    virtual void addLockerStation(const LockerStationDetails& lockerStation) = 0;
+    /** Get a locker station by id */
+    virtual OperationStatus<LockerStation*> getLockerStationById(LockerStationId lockerStationId) = 0;
 
-    /** Remove a locker station by ID */
-    virtual void removeLockerStation(LockerStationId id) = 0;
+    /** Add a new locker station */
+    virtual OperationStatus<bool> addLockerStation(std::unique_ptr<LockerStation> lockerStation) = 0;
+
+    /** Remove a locker station */
+    virtual OperationStatus<bool> removeLockerStation(LockerStationId lockerStationId) = 0;
 };
 
 #endif // I_LOCKER_STATION_REPOSITORY_HPP

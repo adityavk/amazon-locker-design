@@ -5,15 +5,35 @@
 #include <string>
 #include <unordered_map>
 #include "../public/Types.hpp"
+#include "factories/NotificationManagerFactory.hpp"
+#include "factories/LockerFinderFactory.hpp"
+#include "factories/LockerAvailabilityManagerFactory.hpp"
+#include "factories/LockerCodeManagerFactory.hpp"
 
+/** Admin for the locker system */
 class LockerSystemAdmin {
     std::string adminId;
     std::string name;
+    std::unordered_map<LockerStationId, std::pair<LockerStationDetails, std::vector<LockerConfig>>> lockerStations;
+    NotificationManagerType notificationManagerType;
+    LockerFinderStrategy lockerFinderStrategy;
+    LockerAvailabilityManagerStrategy lockerAvailabilityManagerStrategy;
+    LockerCodeManagerStrategy lockerCodeManagerStrategy;
+    bool initialized = false;
 public:
-    LockerSystemAdmin(std::string adminId, std::string name);
+    LockerSystemAdmin(
+        std::string adminId, std::string name,
+        NotificationManagerType notificationManagerType,
+        LockerFinderStrategy lockerFinderStrategy,
+        LockerAvailabilityManagerStrategy lockerAvailabilityManagerStrategy,
+        LockerCodeManagerStrategy lockerCodeManagerStrategy
+    );
 
-    void addLockerStation(LockerStationId id, Location location, std::string name, std::unordered_map<PackageSize, uint32_t> lockerCounts);
+    void addLockerStation(LockerStationId id, Location location, std::string name, std::vector<LockerConfig> lockers);
+
     void removeLockerStation(LockerStationId id);
+
+    void initializeSystem();
 };
 
 #endif // LOCKER_SYSTEM_ADMIN_HPP

@@ -1,10 +1,11 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
-#include <cstdint>
-#include <string>
 #include <chrono>
+#include <cstdint>
+#include <functional>
 #include <ostream>
+#include <string>
 
 /** Represents a location on the Earth's surface */
 struct Location {
@@ -39,7 +40,8 @@ enum class PackageSize {
     Small,
     Medium,
     Large,
-    ExtraLarge
+    ExtraLarge,
+    Invalid
 };
 
 /** ID of a package */
@@ -68,6 +70,8 @@ struct LockerStationDetails {
     LockerStationId id;
     Location location;
     std::string name;
+
+    LockerStationDetails(LockerStationId id, Location location, std::string name) : id(id), location(location), name(std::move(name)) {}
 };
 
 /** Common response type for operations to indicate success (with result object) or failure (with error message) */
@@ -80,5 +84,7 @@ struct OperationStatus {
     OperationStatus(T result) : success(true), result(result) {}
     OperationStatus(std::string message) : success(false), message(message) {}
 };
+
+using NotificationHandler = std::function<void(UserId, std::string)>;
 
 #endif // TYPES_HPP

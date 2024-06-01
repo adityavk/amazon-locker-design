@@ -2,7 +2,7 @@
 #define I_PACKAGE_LOCATION_MANAGER_HPP
 
 #include <cstdint>
-#include "../public/Types.hpp"
+#include "../../public/Types.hpp"
 
 /** Interface to manage the location (locker station) of packages */
 class IPackageLocationManager {
