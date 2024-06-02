@@ -29,6 +29,12 @@ MAIN_OBJ = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(MAIN_SRC))
 # Binary
 MAIN_BIN = locker_system
 
+# Debug flag
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+    CXXFLAGS += -g
+endif
+
 # Targets
 all: dir $(MAIN_BIN)
 

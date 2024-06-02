@@ -48,15 +48,13 @@ std::optional<LockerId> IntervalBasedLockerAvailabilityManager::reserveLocker(Lo
     auto& freeIntervals = freeIntervalsPerSize[static_cast<size_t>(lockerSize)];
 
     // Greedily find the first interval that fits
-    auto it = freeIntervals.lower_bound(FreeInterval(startTime, startTime, 0));
+    auto it = freeIntervals.begin();
 
-    for (; it != freeIntervals.end() && it->startTime < endTime; ++it) {
-        if (it->endTime >= endTime) {
-            break;
-        }
+    while (it != freeIntervals.end() && it->startTime <= startTime && it->endTime < endTime) {
+        ++it;
     }
 
-    if (it == freeIntervals.end() || it->startTime >= endTime || it->endTime < endTime) {
+    if (it == freeIntervals.end() || it->startTime > startTime) {
         return std::nullopt;
     }
 
