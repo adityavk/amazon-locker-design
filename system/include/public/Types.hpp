@@ -51,6 +51,7 @@ enum class PackageStatus {
     Pending,
     InTransit,
     Delivered,
+    Collected,
     Cancelled
 };
 
@@ -82,6 +83,7 @@ struct Package {
     OrderId orderId;
     PackageStatus status;
     PackageSize size;
+    DateTime estimatedDeliveryTime;
     LockerStationId lockerStationId;
 };
 

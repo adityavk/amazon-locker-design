@@ -3,66 +3,43 @@
 #include "../system/include/public/LockerSystem.hpp"
 
 CustomerLockerExperience::CustomerLockerExperience(UserId userId, std::string name, std::string email, Location location)
-    : userId(userId), name(name), email(email), location(location) {}
-
-OperationStatus<bool> CustomerLockerExperience::checkoutFromShoppingCart(double radius, const Package& package, DateTime estimatedDeliveryTime) {
-    auto& lockerSystem = LockerSystem::getInstance();
-    const auto lockerStations = lockerSystem.findLockersNearLocation(location, radius);
-    if (lockerStations.empty()) {
-        return OperationStatus<bool>("Failed to find locker stations nearby");
-    }
-
-    std::cout << "Nearby locker stations: " << std::endl;
-    for (int i = 0; i < lockerStations.size(); i++) {
-        std::cout << (i + 1) << ". " << lockerStations[i].name << ": " << lockerStations[i].location << std::endl;
-    }
-
-    int numTries = 5;
-    while (numTries-- > 0) {
-
-        std::cout << "Select a locker station (input the number of the station and press enter):";
-        int stationIndex;
-        std::cin >> stationIndex;
-        if (stationIndex < 1 || stationIndex > lockerStations.size()) {
-            std::cout << "Invalid station number. Please try again." << std::endl;
-            continue;
-        }
-
-        const auto storeStatus = lockerSystem.storePackage(
-            package,
-            lockerStations[stationIndex - 1].id,
-            estimatedDeliveryTime - reservationDurationPriorToETA,
-            estimatedDeliveryTime + storageDuration
-        );
-        if (!storeStatus.success) {
-            std::cout << "Failed to store package: " << storeStatus.message << std::endl;
-            std::cout << "Try again? (y/n): ";
-            char tryAgain;
-            std::cin >> tryAgain;
-            if (tryAgain != 'y') {
-                return OperationStatus<bool>(false);
-            } else {
-                continue;
+    : userId(userId), name(name), email(email), location(location) {
+        LockerSystem::getInstance().subscribeToNotifications(userId, [this](std::string message) {
+            std::cout << "Received notification: " << message << std::endl;
+            // "Package " + std::to_string(package.id) + " delivered to locker " + std::to_string(package.lockerStationId) + ". Pickup code: " + std::to_string(code)
+            if (message.find(" delivered to locker ") != std::string::npos) {
+                auto packageIdStart = message.find("Package ") + 8;
+                auto packageIdEnd = message.find(" delivered to locker ");
+                auto lockerStationIdStart = packageIdEnd + 21;
+                auto lockerStationIdEnd = message.find(". Pickup code: ");
+                auto codeStart = lockerStationIdEnd + 14;
+                auto codeEnd = message.size();
+                auto packageId = std::stoull(message.substr(packageIdStart, packageIdEnd - packageIdStart));
+                auto lockerStationId = std::stoull(message.substr(lockerStationIdStart, lockerStationIdEnd - lockerStationIdStart));
+                auto code = std::stoull(message.substr(codeStart, codeEnd - codeStart));
+                packageCollectionDetails[packageId] = std::make_pair(lockerStationId, code);
             }
-        }
-
-        packageToLockerStation[package.id] = lockerStations[stationIndex - 1].id;
-        return OperationStatus<bool>(true);
+        });
     }
 
-    std::cout << "Failed to select a locker station after multiple tries" << std::endl;
-    return OperationStatus<bool>(false);
+std::vector<LockerStationDetails> CustomerLockerExperience::findNearbyLockerStations(double radius) {
+    return LockerSystem::getInstance().findLockersNearLocation(location, radius);
 }
 
-OperationStatus<bool> CustomerLockerExperience::collectPackage(PackageId packageId) {
-    const auto it = packageToLockerStation.find(packageId);
-    if (it == packageToLockerStation.end()) {
-        return OperationStatus<bool>("User has not ordered package " + std::to_string(packageId));
-    }
+OperationStatus<bool> CustomerLockerExperience::storePackage(Package& package, LockerStationId lockerStationId) {
+    package.status = PackageStatus::InTransit;
+    return LockerSystem::getInstance().storePackage(
+        package,
+        lockerStationId,
+        package.estimatedDeliveryTime - reservationDurationPriorToETA,
+        package.estimatedDeliveryTime + storageDuration
+    );
+}
 
-    const auto status = LockerSystem::getInstance().openLocker(it->second, packageId);
-    if (status.success) {
-        packageToLockerStation.erase(it);
+OperationStatus<Package> CustomerLockerExperience::collectPackage(PackageId packageId) {
+    auto packageDetails = packageCollectionDetails.find(packageId);
+    if (packageDetails == packageCollectionDetails.end()) {
+        return OperationStatus<Package>("Package not found");
     }
-    return status;
+    return LockerSystem::getInstance().openLocker(packageDetails->second.first, packageDetails->second.second);
 }

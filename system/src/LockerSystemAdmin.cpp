@@ -1,4 +1,4 @@
-#include "../include/private/LockerSystemAdmin.hpp"
+#include "../include/admin/LockerSystemAdmin.hpp"
 #include "../include/public/LockerSystem.hpp"
 #include "../include/private/LockerStation.hpp"
 #include "../include/private/LockerStationRepository.hpp"

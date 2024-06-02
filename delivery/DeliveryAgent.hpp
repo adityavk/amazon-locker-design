@@ -13,8 +13,8 @@ public:
     DeliveryAgent(std::string name, std::string agentId): name(name), agentId(agentId) {}
 
     /** Finish delivery of a package */
-    OperationStatus<bool> completeDelivery(Package& package) {
-        return LockerSystem::getInstance().deliverPackage(package.lockerStationId, package.id);
+    OperationStatus<bool> completeDelivery(Package package) {
+        return LockerSystem::getInstance().deliverPackage(package.lockerStationId, package);
     }
 };
 

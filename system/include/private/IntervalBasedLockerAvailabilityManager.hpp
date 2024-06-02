@@ -36,7 +36,7 @@ public:
     IntervalBasedLockerAvailabilityManager(const std::vector<LockerConfig>& lockers);
     bool assignLocker(const Package& package, DateTime startTime, DateTime endTime) override;
     void freeLocker(PackageId packageId) override;
-    OperationStatus<ReservedPackage> getReservedPackage(PackageId packageId) override;
+    OperationStatus<ReservedPackage&> getReservedPackage(PackageId packageId) override;
 };
 
 #endif // INTERVAL_BASED_LOCKER_AVAILABILITY_MANAGER_HPP

@@ -22,10 +22,10 @@ public:
     OperationStatus<bool> storePackage(Package& package, LockerStationId lockerStationId, DateTime fromTime, DateTime toTime) const;
 
     /** Open the locker to retrieve a package */
-    OperationStatus<bool> openLocker(LockerStationId lockerStationId, LockerPickupCode code) const;
+    OperationStatus<Package> openLocker(LockerStationId lockerStationId, LockerPickupCode code) const;
 
     /** Deliver a package to the locker station */
-    OperationStatus<bool> deliverPackage(LockerStationId lockerStationId, PackageId packageId) const;
+    OperationStatus<bool> deliverPackage(LockerStationId lockerStationId, Package package) const;
 
     /** Subscribe to system notifications */
     OperationStatus<bool> subscribeToNotifications(UserId userId, NotificationHandler handler) const;

@@ -42,24 +42,24 @@ OperationStatus<bool> LockerSystem::storePackage(Package& package, LockerStation
     return OperationStatus<bool>(true);
 }
 
-OperationStatus<bool> LockerSystem::openLocker(LockerStationId lockerStationId, LockerPickupCode code) const {
+OperationStatus<Package> LockerSystem::openLocker(LockerStationId lockerStationId, LockerPickupCode code) const {
     auto lockerStationStatus = lockerStationRepository->getLockerStationById(lockerStationId);
     if (!lockerStationStatus.success) {
-        return OperationStatus<bool>(std::move(lockerStationStatus.message));
+        return std::move(lockerStationStatus.message);
     }
 
     const auto lockerStation = lockerStationStatus.result;
     return lockerStation->openLocker(code);
 }
 
-OperationStatus<bool> LockerSystem::deliverPackage(LockerStationId lockerStationId, PackageId packageId) const {
+OperationStatus<bool> LockerSystem::deliverPackage(LockerStationId lockerStationId, Package package) const {
     auto lockerStationStatus = lockerStationRepository->getLockerStationById(lockerStationId);
     if (!lockerStationStatus.success) {
         return OperationStatus<bool>(std::move(lockerStationStatus.message));
     }
 
     const auto lockerStation = lockerStationStatus.result;
-    return lockerStation->deliverPackage(packageId);
+    return lockerStation->deliverPackage(std::move(package));
 }
 
 OperationStatus<bool> LockerSystem::subscribeToNotifications(UserId userId, NotificationHandler handler) const {

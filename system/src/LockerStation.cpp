@@ -22,34 +22,36 @@ OperationStatus<bool> LockerStation::assignLocker(const Package& package, DateTi
     return OperationStatus<bool>("No locker available");
 }
 
-OperationStatus<bool> LockerStation::deliverPackage(PackageId packageId) {
-    auto packageDetailsStatus = lockerAvailabilityManager->getReservedPackage(packageId);
+OperationStatus<bool> LockerStation::deliverPackage(Package package) {
+    auto packageDetailsStatus = lockerAvailabilityManager->getReservedPackage(package.id);
     if (!packageDetailsStatus.success) {
         return OperationStatus<bool>(std::move(packageDetailsStatus.message));
     }
 
     auto& packageDetails = packageDetailsStatus.result;
-    packageDetails.package.status = PackageStatus::Delivered;
-    const auto code = lockerCodeManager->generatePickupCode(packageId, packageDetails.lockerId);
-    notificationManager->sendNotification(packageDetails.package.userId, "Package delivered to locker " + details.name + ". Pickup code: " + std::to_string(code));
+    package.status = PackageStatus::Delivered;
+    packageDetails.package = package;
+    const auto code = lockerCodeManager->generatePickupCode(package.id, packageDetails.lockerId);
+    notificationManager->sendNotification(package.userId, "Package " + std::to_string(package.id) + " delivered to locker " + std::to_string(package.lockerStationId) + ". Pickup code: " + std::to_string(code));
     return OperationStatus<bool>(true);
 }
 
-OperationStatus<bool> LockerStation::openLocker(LockerPickupCode code) {
+OperationStatus<Package> LockerStation::openLocker(LockerPickupCode code) {
     auto lockerIdStatus = lockerCodeManager->getLockerIdForPickupCode(code);
     if (!lockerIdStatus.success) {
-        return OperationStatus<bool>(std::move(lockerIdStatus.message));
+        return std::move(lockerIdStatus.message);
     }
 
     const auto [packageId, lockerId] = lockerIdStatus.result;
     auto packageDetailsStatus = lockerAvailabilityManager->getReservedPackage(packageId);
     if (!packageDetailsStatus.success) {
-        return OperationStatus<bool>(std::move(packageDetailsStatus.message));
+        return std::move(packageDetailsStatus.message);
     }
 
-    notificationManager->sendNotification(packageDetailsStatus.result.package.userId, "Package picked up from locker " + details.name);
+    Package package = packageDetailsStatus.result.package;
+    notificationManager->sendNotification(package.userId, "Package picked up from locker " + details.name);
     lockerCodeManager->removePickupCode(code);
     lockerAvailabilityManager->freeLocker(packageId);
-    return OperationStatus<bool>(true);
+    return package;
 }
 

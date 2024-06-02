@@ -25,7 +25,7 @@ public:
     virtual void freeLocker(PackageId packageId) = 0;
 
     /** Get a package for which a locker has been reserved */
-    virtual OperationStatus<ReservedPackage> getReservedPackage(PackageId packageId) = 0;
+    virtual OperationStatus<ReservedPackage&> getReservedPackage(PackageId packageId) = 0;
 };
 
 #endif // I_LOCKER_AVAILABILITY_MANAGER_HPP

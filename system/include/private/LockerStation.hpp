@@ -20,10 +20,10 @@ public:
     OperationStatus<bool> assignLocker(const Package& package, DateTime fromTime, DateTime toTime);
 
     /** Open the locker to retrieve a package */
-    OperationStatus<bool> openLocker(LockerPickupCode code);
+    OperationStatus<Package> openLocker(LockerPickupCode code);
 
     /** Deliver a package to the locker station */
-    OperationStatus<bool> deliverPackage(PackageId packageId);
+    OperationStatus<bool> deliverPackage(Package package);
 
 private:
     friend class LockerSystemAdmin;
