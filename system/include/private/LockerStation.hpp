@@ -13,6 +13,13 @@
 
 class LockerStation {
 public:
+    LockerStation(
+        LockerStationId id, Location location, std::string name,
+        std::unique_ptr<ILockerCodeManager> lockerCodeManager,
+        std::shared_ptr<INotificationManager> notificationManager,
+        std::unique_ptr<ILockerAvailabilityManager> lockerAvailabilityManager
+    );
+
     /** Get the locker station details */
     LockerStationDetails getDetails() const;
 
@@ -26,19 +33,10 @@ public:
     OperationStatus<bool> deliverPackage(Package package);
 
 private:
-    friend class LockerSystemAdmin;
-
     LockerStationDetails details;
     std::unique_ptr<ILockerCodeManager> lockerCodeManager;
     std::shared_ptr<INotificationManager> notificationManager;
     std::unique_ptr<ILockerAvailabilityManager> lockerAvailabilityManager;
-
-    LockerStation(
-        LockerStationId id, Location location, std::string name,
-        std::unique_ptr<ILockerCodeManager> lockerCodeManager,
-        std::shared_ptr<INotificationManager> notificationManager,
-        std::unique_ptr<ILockerAvailabilityManager> lockerAvailabilityManager
-    );
 };
 
 #endif // LOCKER_STATION_HPP

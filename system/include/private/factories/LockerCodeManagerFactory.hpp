@@ -2,7 +2,7 @@
 #define LOCKER_CODE_MANAGER_FACTORY_HPP
 
 #include <memory>
-#include "interfaces/ILockerCodeManager.hpp"
+#include "../interfaces/ILockerCodeManager.hpp"
 #include "../RandomLockerCodeManager.hpp"
 
 enum class LockerCodeManagerStrategy {

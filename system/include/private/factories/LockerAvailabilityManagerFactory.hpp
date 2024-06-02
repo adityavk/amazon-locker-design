@@ -2,7 +2,7 @@
 #define LOCKER_AVAILABILITY_MANAGER_FACTORY_HPP
 
 #include <memory>
-#include "interfaces/ILockerAvailabilityManager.hpp"
+#include "../interfaces/ILockerAvailabilityManager.hpp"
 #include "../IntervalBasedLockerAvailabilityManager.hpp"
 
 enum class LockerAvailabilityManagerStrategy {

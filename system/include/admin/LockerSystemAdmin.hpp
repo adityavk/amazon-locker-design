@@ -5,10 +5,10 @@
 #include <string>
 #include <unordered_map>
 #include "../public/Types.hpp"
-#include "factories/NotificationManagerFactory.hpp"
-#include "factories/LockerFinderFactory.hpp"
-#include "factories/LockerAvailabilityManagerFactory.hpp"
-#include "factories/LockerCodeManagerFactory.hpp"
+#include "../private/factories/NotificationManagerFactory.hpp"
+#include "../private/factories/LockerFinderFactory.hpp"
+#include "../private/factories/LockerAvailabilityManagerFactory.hpp"
+#include "../private/factories/LockerCodeManagerFactory.hpp"
 
 /** Admin for the locker system */
 class LockerSystemAdmin {

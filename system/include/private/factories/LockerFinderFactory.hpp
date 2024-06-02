@@ -2,7 +2,7 @@
 #define LOCKER_FINDER_FACTORY_HPP
 
 #include <memory>
-#include "interfaces/ILockerFinder.hpp"
+#include "../interfaces/ILockerFinder.hpp"
 #include "../DistanceBasedLockerFinder.hpp"
 
 enum class LockerFinderStrategy {

@@ -33,17 +33,12 @@ public:
 private:
     friend class LockerSystemAdmin;
 
-    static std::unique_ptr<LockerSystem> instance;
-
     std::unique_ptr<ILockerFinder> lockerFinder;
     std::unique_ptr<ILockerStationRepository> lockerStationRepository;
     std::shared_ptr<INotificationManager> notificationManager;
+    bool initialized = false;
 
-    LockerSystem(
-        std::unique_ptr<ILockerFinder> lockerFinder,
-        std::unique_ptr<ILockerStationRepository> lockerStationRepository,
-        std::shared_ptr<INotificationManager> notificationManager
-    );
+    LockerSystem() = default;
     LockerSystem(const LockerSystem&) = delete;
     LockerSystem& operator=(const LockerSystem&) = delete;
 

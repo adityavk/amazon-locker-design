@@ -24,6 +24,8 @@ using LockerSize = PackageSize;
 struct LockerConfig {
     LockerId lockerId;
     LockerSize lockerSize;
+
+    LockerConfig(LockerId lockerId, LockerSize lockerSize) : lockerId(lockerId), lockerSize(lockerSize) {}
 };
 
 class IntervalBasedLockerAvailabilityManager : public ILockerAvailabilityManager {
@@ -36,7 +38,7 @@ public:
     IntervalBasedLockerAvailabilityManager(const std::vector<LockerConfig>& lockers);
     bool assignLocker(const Package& package, DateTime startTime, DateTime endTime) override;
     void freeLocker(PackageId packageId) override;
-    OperationStatus<ReservedPackage&> getReservedPackage(PackageId packageId) override;
+    OperationStatus<std::unique_ptr<ReservedPackage>> getReservedPackage(PackageId packageId) override;
 };
 
 #endif // INTERVAL_BASED_LOCKER_AVAILABILITY_MANAGER_HPP

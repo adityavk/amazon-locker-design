@@ -14,9 +14,9 @@ LockerPickupCode RandomLockerCodeManager::generatePickupCode(PackageId packageId
 
 OperationStatus<std::pair<PackageId, LockerId>> RandomLockerCodeManager::getLockerIdForPickupCode(LockerPickupCode pickupCode) {
     if (const auto it = pickupCodeToPackageAndLocker.find(pickupCode); it != pickupCodeToPackageAndLocker.end()) {
-        return OperationStatus<std::pair<PackageId, LockerId>>(it->second);
+        return OperationStatus<std::pair<PackageId, LockerId>>::fromResult(it->second);
     }
-    return OperationStatus<std::pair<PackageId, LockerId>>("Invalid pickup code");
+    return OperationStatus<std::pair<PackageId, LockerId>>::fromError("Invalid pickup code");
 }
 
 void RandomLockerCodeManager::removePickupCode(LockerPickupCode pickupCode) {

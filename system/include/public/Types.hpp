@@ -20,6 +20,7 @@ struct Location {
         return os;
     }
 
+    /** Calculate the distance between this location and another location in meters */
     double distanceTo(const Location& other) const {
         double lat1 = latitude;
         double lon1 = longitude;
@@ -100,11 +101,17 @@ struct LockerStationDetails {
 template <typename T>
 struct OperationStatus {
     bool success;
-    std::string message;
+    std::string errorMessage;
     T result;
 
-    OperationStatus(T result) : success(true), result(result) {}
-    OperationStatus(std::string message) : success(false), message(message) {}
+    template <typename U>
+    static OperationStatus fromResult(U&& result) {
+        return OperationStatus { true, "", std::forward<U>(result) };
+    }
+
+    static OperationStatus fromError(std::string errorMessage) {
+        return OperationStatus { false, std::move(errorMessage), T() };
+    }
 };
 
 using NotificationHandler = std::function<void(std::string)>;

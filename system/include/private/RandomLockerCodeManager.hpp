@@ -10,6 +10,7 @@ class RandomLockerCodeManager : public ILockerCodeManager {
     std::uniform_int_distribution<LockerPickupCode> uniformDistribution;
     std::mt19937 randomEngine;
 public:
+    RandomLockerCodeManager();
     LockerPickupCode generatePickupCode(PackageId packageId, LockerId lockerId) override;
     OperationStatus<std::pair<PackageId, LockerId>> getLockerIdForPickupCode(LockerPickupCode pickupCode) override;
     void removePickupCode(LockerPickupCode pickupCode) override;

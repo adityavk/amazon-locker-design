@@ -36,12 +36,12 @@ void IntervalBasedLockerAvailabilityManager::freeLocker(PackageId packageId) {
     packageToReservedLocker.erase(it);
 }
 
-OperationStatus<ReservedPackage&> IntervalBasedLockerAvailabilityManager::getReservedPackage(PackageId packageId) {
+OperationStatus<std::unique_ptr<ReservedPackage>> IntervalBasedLockerAvailabilityManager::getReservedPackage(PackageId packageId) {
     const auto it = packageToReservedLocker.find(packageId);
     if (it == packageToReservedLocker.end()) {
-        return ("No locker reserved for package " + std::to_string(packageId));
+        return OperationStatus<std::unique_ptr<ReservedPackage>>::fromError("No locker reserved for package " + std::to_string(packageId));
     }
-    return it->second;
+    return OperationStatus<std::unique_ptr<ReservedPackage>>::fromResult(std::make_unique<ReservedPackage>(it->second));
 }
 
 std::optional<LockerId> IntervalBasedLockerAvailabilityManager::reserveLocker(LockerSize lockerSize, DateTime startTime, DateTime endTime) {

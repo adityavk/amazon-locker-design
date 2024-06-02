@@ -2,7 +2,7 @@
 #define NOTIFICATION_MANAGER_FACTORY_HPP
 
 #include <memory>
-#include "interfaces/INotificationManager.hpp"\
+#include "../interfaces/INotificationManager.hpp"
 #include "../BasicNotificationManager.hpp"
 
 enum class NotificationManagerType {

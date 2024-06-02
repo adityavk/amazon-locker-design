@@ -32,7 +32,7 @@ void LockerSystemAdmin::initializeSystem() {
     }
     auto lockerFinder = LockerFinderFactory::createLockerFinder(lockerFinderStrategy);
     auto notificationManager = NotificationManagerFactory::createNotificationManager(notificationManagerType);
-    auto lockerStationRepository = std::make_unique<LockerStationRepository>(lockerStations);
+    auto lockerStationRepository = std::make_unique<LockerStationRepository>();
 
     for (auto& [id, station] : lockerStations) {
         auto& [details, lockers] = station;

@@ -22,24 +22,25 @@ CustomerLockerExperience::CustomerLockerExperience(UserId userId, std::string na
         });
     }
 
-std::vector<LockerStationDetails> CustomerLockerExperience::findNearbyLockerStations(double radius) {
+std::vector<LockerStationDetails> CustomerLockerExperience::findNearbyLockerStations(double radius) const {
     return LockerSystem::getInstance().findLockersNearLocation(location, radius);
 }
 
-OperationStatus<bool> CustomerLockerExperience::storePackage(Package& package, LockerStationId lockerStationId) {
+OperationStatus<bool> CustomerLockerExperience::checkoutPackage(Package& package, LockerStationId lockerStationId) const {
+    package.userId = userId;
     package.status = PackageStatus::InTransit;
     return LockerSystem::getInstance().storePackage(
         package,
         lockerStationId,
-        package.estimatedDeliveryTime - reservationDurationPriorToETA,
-        package.estimatedDeliveryTime + storageDuration
+        package.estimatedDeliveryTime - RESERVATION_DURATION_PRIOR_TO_ETA,
+        package.estimatedDeliveryTime + STORAGE_DURATION
     );
 }
 
-OperationStatus<Package> CustomerLockerExperience::collectPackage(PackageId packageId) {
+OperationStatus<Package> CustomerLockerExperience::collectPackage(PackageId packageId) const {
     auto packageDetails = packageCollectionDetails.find(packageId);
     if (packageDetails == packageCollectionDetails.end()) {
-        return OperationStatus<Package>("Package not found");
+        return OperationStatus<Package>::fromError("Package not found");
     }
     return LockerSystem::getInstance().openLocker(packageDetails->second.first, packageDetails->second.second);
 }
